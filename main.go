@@ -5,6 +5,7 @@ import (
 
 	// "github.com/ad1822/wakafetch-sqlite/render"
 
+	"github.com/ad1822/wakafetch-sqlite/render"
 	"github.com/ad1822/wakafetch-sqlite/sqlite"
 	heatmap "github.com/ad1822/wakafetch-sqlite/ui"
 	_ "github.com/mattn/go-sqlite3"
@@ -19,11 +20,7 @@ func main() {
 		panic(err)
 	}
 
-	// db, err := sqlite.ConnectToSqlite()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	sqlite.DisplayDashboard("today")
+	render.DisplayDashboard("today")
 	heatmap.RenderHeatmap(activities)
 
 	// sqlite.DisplayDashboard("all")

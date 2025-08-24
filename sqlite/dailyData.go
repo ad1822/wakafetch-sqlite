@@ -3,8 +3,6 @@ package sqlite
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"strings"
 
 	"github.com/fatih/color"
 	_ "github.com/mattn/go-sqlite3"
@@ -12,17 +10,14 @@ import (
 
 const userID = "ad1822"
 
-// ConnectToSqlite opens SQLite connection
-
 // formatHrsMin converts seconds to "Xh Ym"
-func formatHrsMin(seconds int64) string {
+func FormatHrsMin(seconds int64) string {
 	hours := seconds / 3600
 	minutes := (seconds % 3600) / 60
 	return fmt.Sprintf("%dh %dm", hours, minutes)
 }
 
-// printStat prints aligned label-value with colors
-func printStat(label, value string, labelColor, valueColor *color.Color) {
+func PrintStat(label, value string, labelColor, valueColor *color.Color) {
 	cyan := color.New(color.FgCyan).SprintFunc()
 	fmt.Printf("%s%s %s\n", cyan(string(label[0])), labelColor.Sprint(label[1:]), valueColor.Sprint(value))
 }
@@ -181,63 +176,63 @@ func FetchTimeByEditor(db *sql.DB, period string) (map[string]int64, error) {
 }
 
 // DisplayDashboard prints all stats
-func DisplayDashboard(period string) {
-	db, err := ConnectToSqlite()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	labelColor := color.New(color.FgBlue, color.Bold)
-	// borderColor := color.New(color.FgCyan, color.Bold)
-	valueColor := color.New(color.FgWhite)
-
-	totalTime, _ := FetchTotalTime(db, period)
-	dailyAvg, _ := FetchDailyAvg(db)
-	topProject, _ := FetchTopProject(db, period)
-	topEditor, _ := FetchTopEditor(db, period)
-	topOS, _ := FetchTopOS(db, period)
-	languages, _ := FetchLanguagesCount(db, period)
-	projects, _ := FetchProjectsCount(db, period)
-	editorTimes, _ := FetchTimeByEditor(db, period)
-
-	// Print summary block
-	// fmt.Println()
-
-	// for range 15 {
-	// 	fmt.Print("──")
-	// }
-
-	fmt.Println()
-	cyan := color.New(color.FgCyan).SprintFunc()
-
-	fmt.Print(cyan("╭─"))
-	if period == "today" {
-		fmt.Println(cyan("[  Daily Stats ] ──────────"))
-	} else {
-		fmt.Println(cyan("[  Stats ] ────────────"))
-	}
-
-	printStat("|"+"  Total Time    ", formatHrsMin(totalTime), labelColor, valueColor)
-	printStat("|"+"  Daily Avg     ", formatHrsMin(dailyAvg), labelColor, valueColor)
-	printStat("|"+"  Top Project   ", topProject, labelColor, valueColor)
-	printStat("|"+"  Top Editor    ", topEditor, labelColor, valueColor)
-	printStat("|"+"  Top OS        ", topOS, labelColor, valueColor)
-	printStat("|"+"  Languages     ", fmt.Sprintf("%d", languages), labelColor, valueColor)
-	printStat("|"+"  Projects      ", fmt.Sprintf("%d", projects), labelColor, valueColor)
-
-	// Editor breakdown
-
-	maxLen := 15
-	for editor, seconds := range editorTimes {
-		padding := strings.Repeat(" ", maxLen-len(editor))
-		fmt.Printf(cyan("|")+"  %s%s%s\n",
-			labelColor.Sprintf(editor),
-			padding,
-			valueColor.Sprintf(formatHrsMin(seconds)),
-		)
-	}
-
-	fmt.Println(cyan("╰"))
-	fmt.Println()
-}
+// func DisplayDashboard(period string) {
+// 	db, err := ConnectToSqlite()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer db.Close()
+//
+// 	labelColor := color.New(color.FgBlue, color.Bold)
+// 	// borderColor := color.New(color.FgCyan, color.Bold)
+// 	valueColor := color.New(color.FgWhite)
+//
+// 	totalTime, _ := FetchTotalTime(db, period)
+// 	dailyAvg, _ := FetchDailyAvg(db)
+// 	topProject, _ := FetchTopProject(db, period)
+// 	topEditor, _ := FetchTopEditor(db, period)
+// 	topOS, _ := FetchTopOS(db, period)
+// 	languages, _ := FetchLanguagesCount(db, period)
+// 	projects, _ := FetchProjectsCount(db, period)
+// 	editorTimes, _ := FetchTimeByEditor(db, period)
+//
+// 	// Print summary block
+// 	// fmt.Println()
+//
+// 	// for range 15 {
+// 	// 	fmt.Print("──")
+// 	// }
+//
+// 	fmt.Println()
+// 	cyan := color.New(color.FgCyan).SprintFunc()
+//
+// 	fmt.Print(cyan("╭─"))
+// 	if period == "today" {
+// 		fmt.Println(cyan("[  Daily Stats ] ──────────"))
+// 	} else {
+// 		fmt.Println(cyan("[  Stats ] ────────────"))
+// 	}
+//
+// 	printStat("|"+"  Total Time    ", formatHrsMin(totalTime), labelColor, valueColor)
+// 	printStat("|"+"  Daily Avg     ", formatHrsMin(dailyAvg), labelColor, valueColor)
+// 	printStat("|"+"  Top Project   ", topProject, labelColor, valueColor)
+// 	printStat("|"+"  Top Editor    ", topEditor, labelColor, valueColor)
+// 	printStat("|"+"  Top OS        ", topOS, labelColor, valueColor)
+// 	printStat("|"+"  Languages     ", fmt.Sprintf("%d", languages), labelColor, valueColor)
+// 	printStat("|"+"  Projects      ", fmt.Sprintf("%d", projects), labelColor, valueColor)
+//
+// 	// Editor breakdown
+//
+// 	maxLen := 15
+// 	for editor, seconds := range editorTimes {
+// 		padding := strings.Repeat(" ", maxLen-len(editor))
+// 		fmt.Printf(cyan("|")+"  %s%s%s\n",
+// 			labelColor.Sprintf(editor),
+// 			padding,
+// 			valueColor.Sprintf(formatHrsMin(seconds)),
+// 		)
+// 	}
+//
+// 	fmt.Println(cyan("╰"))
+// 	fmt.Println()
+// }

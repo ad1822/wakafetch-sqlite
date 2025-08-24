@@ -8,19 +8,25 @@ import (
 	"github.com/ad1822/wakafetch-sqlite/types"
 )
 
-func FetchDataForHeatMap(from, to time.Time) ([]types.DailyActivity, error) {
+func ConnectToSqlite() (*sql.DB, error) {
 	dbPath := "/home/ad/.local/share/wakapi/wakapi_db.db"
+
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
 	if err = db.Ping(); err != nil {
+		db.Close() // close if ping fails
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
-	// fmt.Println("Connected to SQLite database successfully!")
 
+	// Successful connection, do not close here
+	return db, nil
+}
+func FetchDataForHeatMap(from, to time.Time) ([]types.DailyActivity, error) {
+
+	db, _ := ConnectToSqlite()
 	query := `
 		SELECT strftime('%Y-%m-%d', time) AS day, COUNT(*)
 		FROM heartbeats

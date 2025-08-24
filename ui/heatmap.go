@@ -32,7 +32,7 @@ func RenderHeatmap(activities []types.DailyActivity) {
 		if i == 0 || a.Date.After(maxDate) {
 			// maxDate = a.Date
 			// For Extending Upper Limit
-			maxDate = time.Date(2025, time.October, 30, 0, 0, 0, 0, time.UTC)
+			maxDate = time.Date(2026, time.January, 30, 0, 0, 0, 0, time.UTC)
 		}
 		if a.Count > maxCount {
 			maxCount = a.Count
@@ -67,10 +67,12 @@ func RenderHeatmap(activities []types.DailyActivity) {
 
 	cols := len(grid)
 
-	// title := "WakaAPI "
+	title := " WakaAPI "
 	// Top border
 	fmt.Print(borderColor + "╭")
-	for i := 0; i < (cols + 1); i++ {
+	fmt.Print("─")
+	fmt.Print(title)
+	for i := 0; i < (cols - 4); i++ {
 		fmt.Print("──")
 	}
 	fmt.Println("╮\x1b[0m")

@@ -4,12 +4,17 @@ import (
 	"time"
 
 	"github.com/ad1822/wakafetch-sqlite/sqlite"
+	heatmap "github.com/ad1822/wakafetch-sqlite/ui"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 
 	to := time.Now().UTC()
-	from := to.AddDate(0, 0, -100)
-	sqlite.FetchDataForHeatMap(from, to)
+	from := to.AddDate(0, -3, 0)
+	activities, err := sqlite.FetchDataForHeatMap(from, to)
+	if err != nil {
+		panic(err)
+	}
+	heatmap.RenderHeatmap(activities)
 }

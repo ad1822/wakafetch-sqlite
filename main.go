@@ -11,7 +11,7 @@ import (
 func main() {
 
 	to := time.Now().UTC()
-	from := to.AddDate(0, -3, 0)
+	from := to.AddDate(-1, -3, 0)
 	activities, err := sqlite.FetchDataForHeatMap(from, to)
 	if err != nil {
 		panic(err)

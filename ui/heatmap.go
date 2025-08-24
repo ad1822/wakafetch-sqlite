@@ -25,10 +25,14 @@ func RenderHeatmap(activities []types.DailyActivity) {
 		key := a.Date.Format("2006-01-02")
 		activityMap[key] = a.Count
 		if i == 0 || a.Date.Before(minDate) {
-			minDate = a.Date
+			// minDate = a.Date
+			// For Extending Lower Limit
+			minDate = time.Date(2025, time.August, 1, 0, 0, 0, 0, time.UTC)
 		}
 		if i == 0 || a.Date.After(maxDate) {
-			maxDate = a.Date
+			// maxDate = a.Date
+			// For Extending Upper Limit
+			maxDate = time.Date(2025, time.October, 30, 0, 0, 0, 0, time.UTC)
 		}
 		if a.Count > maxCount {
 			maxCount = a.Count
@@ -67,14 +71,12 @@ func RenderHeatmap(activities []types.DailyActivity) {
 	// Top border
 	fmt.Print(borderColor + "╭")
 	for i := 0; i < (cols + 1); i++ {
-		fmt.Print("──") // width per column
-		// fmt.Println(title)
+		fmt.Print("──")
 	}
 	fmt.Println("╮\x1b[0m")
 
 	// Print vertical layout
-	for day := 0; day < 7; day++ { // Monday -> Sunday
-		// Left border + left padding
+	for day := 0; day < 7; day++ {
 		fmt.Print(borderColor + "│ " + "\x1b[0m")
 
 		for week := 0; week < len(grid); week++ {
@@ -83,16 +85,15 @@ func RenderHeatmap(activities []types.DailyActivity) {
 			if maxCount > 0 && count > 0 {
 				green = int(float64(count) / float64(maxCount) * 255)
 			}
+
 			fmt.Printf(highlight+heatmapChar+"\x1b[0m", green)
 
 			fmt.Print(" ")
 		}
 
-		// Right padding + right border
 		fmt.Println(borderColor + " │\x1b[0m")
 	}
 
-	// Bottom border
 	fmt.Print(borderColor + "╰")
 	for i := 0; i < cols+1; i++ {
 		fmt.Print("──")

@@ -7,7 +7,6 @@ import (
 
 	"github.com/ad1822/wakafetch-sqlite/render"
 	"github.com/ad1822/wakafetch-sqlite/sqlite"
-	heatmap "github.com/ad1822/wakafetch-sqlite/ui"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -21,7 +20,7 @@ func main() {
 	}
 
 	render.DisplayDashboard("today")
-	heatmap.RenderHeatmap(activities)
+	render.RenderHeatmap(activities)
 
 	// sqlite.DisplayDashboard("all")
 }

@@ -1,4 +1,4 @@
-package heatmap
+package render
 
 import (
 	"fmt"

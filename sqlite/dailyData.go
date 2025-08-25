@@ -17,9 +17,14 @@ func FormatHrsMin(seconds int64) string {
 	return fmt.Sprintf("%dh %dm", hours, minutes)
 }
 
-func PrintStat(label, value string, labelColor, valueColor *color.Color) {
+func FormatStatLine(label, value string, labelColor, valueColor *color.Color) string {
 	cyan := color.New(color.FgCyan).SprintFunc()
-	fmt.Printf("%s%s %s\n", cyan(string(label[0])), labelColor.Sprint(label[1:]), valueColor.Sprint(value))
+	// Keep the same coloring logic
+	return fmt.Sprintf("%s%s %s",
+		cyan(string(label[0])),       // first character in cyan
+		labelColor.Sprint(label[1:]), // rest of the label
+		valueColor.Sprint(value),     // value in its color
+	)
 }
 
 // FetchTotalTime fetches total coding time in seconds

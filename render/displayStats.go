@@ -9,7 +9,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func DisplayDashboard(period string) {
+func RenderDashboard(period string) []string {
 	db, err := sqlite.ConnectToSqlite()
 	if err != nil {
 		log.Fatal(err)
@@ -18,6 +18,9 @@ func DisplayDashboard(period string) {
 
 	labelColor := color.New(color.FgBlue, color.Bold)
 	valueColor := color.New(color.FgWhite)
+	cyan := color.New(color.FgCyan).SprintFunc()
+
+	var lines []string
 
 	totalTime, _ := sqlite.FetchTotalTime(db, period)
 	dailyAvg, _ := sqlite.FetchDailyAvg(db)
@@ -28,35 +31,33 @@ func DisplayDashboard(period string) {
 	projects, _ := sqlite.FetchProjectsCount(db, period)
 	editorTimes, _ := sqlite.FetchTimeByEditor(db, period)
 
-	fmt.Println()
-	cyan := color.New(color.FgCyan).SprintFunc()
-
-	fmt.Print(cyan("╭─"))
+	lines = append(lines, "") // empty line
 	if period == "today" {
-		fmt.Println(cyan("[  Daily Stats ] ──────────"))
+		lines = append(lines, cyan("╭─[  Daily Stats ] ──────────"))
 	} else {
-		fmt.Println(cyan("[  Stats ] ────────────"))
+		lines = append(lines, cyan("╭─[  Stats ] ─────────────"))
 	}
 
-	sqlite.PrintStat("|"+"  Total Time    ", sqlite.FormatHrsMin(totalTime), labelColor, valueColor)
-	sqlite.PrintStat("|"+"  Daily Avg     ", sqlite.FormatHrsMin(dailyAvg), labelColor, valueColor)
-	sqlite.PrintStat("|"+"  Top Project   ", topProject, labelColor, valueColor)
-	sqlite.PrintStat("|"+"  Top Editor    ", topEditor, labelColor, valueColor)
-	sqlite.PrintStat("|"+"  Top OS        ", topOS, labelColor, valueColor)
-	sqlite.PrintStat("|"+"  Languages     ", fmt.Sprintf("%d", languages), labelColor, valueColor)
-	sqlite.PrintStat("|"+"  Projects      ", fmt.Sprintf("%d", projects), labelColor, valueColor)
+	lines = append(lines, sqlite.FormatStatLine("|  Total Time    ", sqlite.FormatHrsMin(totalTime), labelColor, valueColor))
+	lines = append(lines, sqlite.FormatStatLine("|  Daily Avg     ", sqlite.FormatHrsMin(dailyAvg), labelColor, valueColor))
+	lines = append(lines, sqlite.FormatStatLine("|  Top Project   ", topProject, labelColor, valueColor))
+	lines = append(lines, sqlite.FormatStatLine("|  Top Editor    ", topEditor, labelColor, valueColor))
+	lines = append(lines, sqlite.FormatStatLine("|  Top OS        ", topOS, labelColor, valueColor))
+	lines = append(lines, sqlite.FormatStatLine("|  Languages     ", fmt.Sprintf("%d", languages), labelColor, valueColor))
+	lines = append(lines, sqlite.FormatStatLine("|  Projects      ", fmt.Sprintf("%d", projects), labelColor, valueColor))
 
 	// Editor breakdown
-
 	maxLen := 15
 	for editor, seconds := range editorTimes {
 		padding := strings.Repeat(" ", maxLen-len(editor))
-		fmt.Printf(cyan("|")+"  %s%s%s\n",
+		lines = append(lines, fmt.Sprintf("|  %s%s%s",
 			labelColor.Sprintf(editor),
 			padding,
 			valueColor.Sprintf(sqlite.FormatHrsMin(seconds)),
-		)
+		))
 	}
 
-	fmt.Println(cyan("╰"))
+	lines = append(lines, cyan("╰"))
+
+	return lines
 }

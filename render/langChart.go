@@ -10,7 +10,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func DisplayLangChart() {
+func RenderLangChart() []string {
 	db, err := sqlite.ConnectToSqlite()
 	if err != nil {
 		log.Fatal(err)
@@ -25,7 +25,6 @@ func DisplayLangChart() {
 
 	langCount := make(map[string]int)
 	hasData := false
-
 	for rows.Next() {
 		var language string
 		var count int
@@ -36,16 +35,10 @@ func DisplayLangChart() {
 		hasData = true
 	}
 
-	if err := rows.Err(); err != nil {
-		log.Fatal(err)
-	}
-
 	if !hasData {
-		fmt.Println("No language data found.")
-		return
+		return []string{"No language data found."}
 	}
 
-	// Find max count
 	maxCount := 0
 	for _, c := range langCount {
 		if c > maxCount {
@@ -53,12 +46,6 @@ func DisplayLangChart() {
 		}
 	}
 
-	if maxCount == 0 {
-		fmt.Println("No activity counts available.")
-		return
-	}
-
-	// Convert map to slice and sort by count
 	type kv struct {
 		Lang  string
 		Count int
@@ -73,17 +60,21 @@ func DisplayLangChart() {
 
 	barColor := color.New(color.FgBlue, color.Bold).SprintFunc()
 	cyan := color.New(color.FgCyan, color.Bold).SprintFunc()
-	// Draw the chart
-	fmt.Println()
+	var lines []string
+	lines = append(lines, "")
+	lines = append(lines, cyan("╭─[  Languages ] ──────────"))
 
-	fmt.Print(cyan("╭─"))
-	fmt.Println(cyan("[  Daily Stats ] ──────────"))
 	for _, item := range sorted {
 		barLength := int(float64(item.Count) / float64(maxCount) * 30)
-		bar := strings.Repeat("█", barLength)
-		line := fmt.Sprintf("| %-10s %s\n", item.Lang, bar) // format string
-		fmt.Print(barColor(line))
+		bar := strings.Repeat("󱪿", barLength)
+		line := fmt.Sprintf("%s %-10s %s",
+			cyan("|"),     // border cyan
+			item.Lang,     // plain text (or you can color language separately)
+			barColor(bar), // only bar colored
+		)
+		lines = append(lines, line)
 	}
 
-	fmt.Println()
+	lines = append(lines, "")
+	return lines
 }

@@ -67,6 +67,7 @@ func RenderHeatmap(activities []types.DailyActivity) {
 
 	cols := len(grid)
 
+	fmt.Println()
 	title := " WakaAPI "
 	// Top border
 	fmt.Print(borderColor + "╭")

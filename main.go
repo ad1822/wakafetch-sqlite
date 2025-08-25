@@ -20,6 +20,7 @@ func main() {
 	}
 
 	render.DisplayDashboard("today")
+	render.DisplayLangChart()
 	render.RenderHeatmap(activities)
 
 	// sqlite.DisplayDashboard("all")
